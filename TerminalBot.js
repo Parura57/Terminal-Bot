@@ -1,39 +1,34 @@
 'use strict';
 
 const { exec } = require("child_process");
+const Discord = require('discord.js');					//Imported the Discord api
+var config = require('./config.json');					//Imported the config file
 
-// Import the discord.js module
-const Discord = require('discord.js');
+const prefix = config.prefix;						//Load a prefix which must be written before the command in Discord
 
-// Sets a prefix for commands
-const prefix = '!'
+const client = new Discord.Client();					// Create an instance of a Discord client
 
-// Create an instance of a Discord client
-const client = new Discord.Client();
 
-/**
- * The ready event is vital, it means that only _after_ this will your bot start reacting to information
- * received from Discord
- */
+
 client.on('ready', () => {
   console.log('Bot ready!');
 });
 
-// Listen for pings
+// Listen for messages
 client.on('message', message => {
-  // If the message is "ping"
+  /*// If the message is "ping"						//Test function, useless
   if (message.content === prefix.concat('ping')) {
     // Send "pong" to the same channel
     message.channel.send('pong');
-  }
+  }*/
 
   if (message.content.startsWith(prefix)) {
     let args = message.content.slice(prefix.length, message.length);
-    exec(args, (error, stdout, stderr) => {
+    exec(args, (error, stdout, stderr) => {				//Execute the command given by the Discord user
 	if (error) {
-    	    console.log(`error: ${error.message}`);
-    	    message.channel.send(`error: ${error.message}`);
-    	    return;
+	    console.log(`error: ${error.message}`);
+	    message.channel.send(`error: ${error.message}`);
+	    return;
 	}
 	if (stderr) {
 	    console.log(`stderr: ${stderr}`);
@@ -46,25 +41,5 @@ client.on('message', message => {
   }
 });
 
-
-/*
-  let args = message.content.slice(prefix.length, message.length);
-  exec(args, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      message.channel.send(`error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.log(`stderr: ${stderr}`);
-      message.channel.send(`stderr: ${stderr}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-    message.channel.send("``` ".concat(`${stdout}`.concat(' ```')));
-    });
-});
-*/
-
-// Log our bot in using the token from https://discord.com/developers/applications
-client.login('Nzg2OTkyOTM0ODQ2MjAxODc3.X9OeSQ.P4bOKZunVEHDfroHo_GQbX2wBRM');
+// Log the bot in using the bot token
+client.login(config.token);
